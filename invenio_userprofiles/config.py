@@ -37,3 +37,6 @@ USERPROFILES_COUNTRIES = lambda: [('ch', 'Switzerland')]
 
 USERPROFILES_READONLY_FIELDS = lambda: []
 """Function to return readonly fields."""
+
+USERPROFILES_READ_ONLY = False
+"""Make the user profiles read-only."""
