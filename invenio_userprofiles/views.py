@@ -112,27 +112,13 @@ def profile():
         formdata=None, obj=current_user, prefix="preferences"
     )
 
-    # Pick form
+    # Process forms
     is_read_only = current_app.config.get("USERPROFILES_READ_ONLY", False)
-    form_name = request.form.get("submit", None)
-    if form_name == "profile" and not is_read_only:
-        handle_form = handle_profile_form
-        form = profile_form
-    elif form_name == "verification":
-        handle_form = handle_verification_form
-        form = verification_form
-    elif form_name == "preferences":
-        handle_form = handle_preferences_form
-        form = preferences_form
-    else:
-        form = None
-
-    # Process form
-    if form:
-        form.process(formdata=request.form)
-        if form.validate_on_submit():
-            handle_form(form)
-            return redirect(url_for(".profile"), code=303)  # this endpoint
+    form = request.form.get('submit', None)
+    if form == 'profile' and not is_read_only:
+        handle_profile_form(profile_form)
+    elif form == 'verification':
+        handle_verification_form(verification_form)
 
     return render_template(
         current_app.config["USERPROFILES_PROFILE_TEMPLATE"],
@@ -167,18 +153,29 @@ def handle_verification_form(form):
 
 def handle_profile_form(form):
     """Handle profile update form."""
-    email_changed = False
-    datastore = current_app.extensions["security"].datastore
-    with db.session.begin_nested():
-        if (
-            current_app.config["USERPROFILES_EMAIL_ENABLED"]
-            and form.email.data != current_user.email
-        ):
-            email_changed = True
-        form.populate_obj(current_user)
-        db.session.add(current_user)
-        datastore.mark_changed(id(db.session), uid=current_user.id)
-    datastore.commit()
+    if current_app.config.get("USERPROFILES_READ_ONLY", False):
+        return
+
+    form.process(formdata=request.form)
+    if form.validate_on_submit():
+        email_changed = False
+        with db.session.begin_nested():
+            # Update profile.
+            current_userprofile.username = form.username.data
+            current_userprofile.last_name=form.last_name.data,
+            current_userprofile.first_name=form.first_name.data,
+            current_userprofile.gender=form.gender.data,
+            current_userprofile.birth_date=form.birth_date.data,
+            current_userprofile.street=form.street.data,
+            current_userprofile.postal_code=form.postal_code.data,
+            current_userprofile.city=form.city.data,
+            current_userprofile.country=form.country.data,
+            current_userprofile.home_phone=form.home_phone.data,
+            current_userprofile.business_phone=form.business_phone.data,
+            current_userprofile.mobile_phone=form.mobile_phone.data,
+            current_userprofile.other_phone=form.other_phone.data,
+            current_userprofile.keep_history=form.keep_history.data
+            db.session.add(current_userprofile)
 
     if email_changed:
         send_confirmation_instructions(current_user)

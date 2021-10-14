@@ -64,3 +64,6 @@ target/
 # Example generated
 examples/static/
 examples/instance/
+
+# VSCode
+.vscode
