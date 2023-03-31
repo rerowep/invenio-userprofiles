@@ -30,13 +30,13 @@ extras_require = {
         'invenio-mail>=1.0.0',
     ],
     'mysql': [
-        'invenio-db[mysql]>=1.0.5',
+        'invenio-db[mysql]>=1.0.9',
     ],
     'postgresql': [
-        'invenio-db[postgresql]>=1.0.5',
+        'invenio-db[postgresql]>=1.0.9',
     ],
     'sqlite': [
-        'invenio-db>=1.0.5',
+        'invenio-db>=1.0.9',
     ],
     'tests': tests_require,
 }
@@ -58,7 +58,7 @@ install_requires = [
     'Flask-Menu>=0.5.0',
     'Flask-WTF>=0.14.3',
     'invenio-accounts>=1.2.1',
-    'invenio-base>=1.2.2',
+    'invenio-base>=1.2.5',
     'invenio-i18n>=1.2.0',
     'invenio-theme>=1.3.4',
 ]
